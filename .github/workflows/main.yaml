@@ -71,7 +71,7 @@ jobs:
         run: |
           # Use 'sed' para encontrar a linha da imagem e substituir a tag
           # MUDE 'AndreViniciusDevOps' para o seu usuário do Docker Hub
-          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/hello-app:${{ env.IMAGE_TAG }}|g" implantacao.yaml
+          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/hello-app:${{ env.IMAGE_TAG }}|g" deployment.yaml
 
       # 4. Cria um Pull Request com a alteração
       - name: Create Pull Request
