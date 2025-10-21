@@ -77,7 +77,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} # O GitHub gera este token automaticamente
+          token: ${{ secrets.PAT_T0KEN }} # O GitHub gera este token automaticamente
           commit-message: "Atualiza imagem para ${{ env.IMAGE_TAG }}"
           title: "Atualização Automática de Imagem para ${{ env.IMAGE_TAG }}"
           body: "Pipeline de CI/CD atualizou a imagem da aplicação para a versão `${{ env.IMAGE_TAG }}`."
