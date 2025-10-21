@@ -55,7 +55,7 @@ jobs:
       - name: Checkout manifests repository
         uses: actions/checkout@v3
         with:
-          repository: AndreViniciusDevOps/olá-manifestos # MUDE AQUI para o seu usuário
+          repository: AndreViniciusDevOps/hello-manifests # MUDE AQUI para o seu usuário
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ref: main # Opcional: garanta que está pegando da branch main
 
