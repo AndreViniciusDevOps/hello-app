@@ -1,0 +1,85 @@
+name: CI-CD Pipeline - Hello App
+
+# Define o gatilho: rodar sempre que houver um push na branch 'main'
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Faz o checkout do código do app (hello-app)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configura o QEMU (necessário para build multi-plataforma)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      # 3. Configura o Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 4. Faz login no Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      # 5. Gera a tag da imagem (vamos usar o SHA curto do commit)
+      - name: Generate Image Tag
+        id: generate_tag
+        run: echo "IMAGE_TAG=sha-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
+      # 6. Builda e envia a imagem para o Docker Hub
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/hello-app:${{ env.IMAGE_TAG }}
+          # Exemplo: AndreViniciusDevOps/hello-app:sha-1234567
+          
+  update_manifest:
+    # Este job só roda depois que o 'build_and_push' terminar com sucesso
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Faz o checkout do repositório de manifestos (hello-manifests)
+      # Precisamos da SSH_PRIVATE_KEY para ter permissão de escrita
+      - name: Checkout manifests repository
+        uses: actions/checkout@v3
+        with:
+          repository: AndreViniciusDevOps/hello-manifests # MUDE AQUI para o seu usuário
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ref: main # Opcional: garanta que está pegando da branch main
+
+      # 2. Gera a nova tag (precisamos dela de novo aqui)
+      - name: Generate Image Tag
+        id: generate_tag
+        run: echo "IMAGE_TAG=sha-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
+      # 3. Atualiza o arquivo deployment.yaml
+      # Este passo assume que você tem um arquivo chamado 'deployment.yaml' 
+      # no repositório 'hello-manifests' com a linha 'image:'
+      - name: Update Kubernetes manifest
+        run: |
+          # Use 'sed' para encontrar a linha da imagem e substituir a tag
+          # MUDE 'AndreViniciusDevOps' para o seu usuário do Docker Hub
+          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/hello-app:${{ env.IMAGE_TAG }}|g" deployment.yaml
+
+      # 4. Cria um Pull Request com a alteração
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # O GitHub gera este token automaticamente
+          commit-message: "Atualiza imagem para ${{ env.IMAGE_TAG }}"
+          title: "Atualização Automática de Imagem para ${{ env.IMAGE_TAG }}"
+          body: "Pipeline de CI/CD atualizou a imagem da aplicação para a versão `${{ env.IMAGE_TAG }}`."
+          branch: "update-image-${{ env.IMAGE_TAG }}"
+          base: "main"
