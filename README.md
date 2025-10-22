@@ -359,5 +359,8 @@ Vamos provar que o pipeline funciona de ponta a ponta.
 6.  **Verifique o Resultado:**
     * Atualize a página no seu navegador: `http://localhost:8081/`.
     * A nova mensagem `{"message": "Meu Pipeline CI/CD funciona!"}` deve aparecer.
+    
+![Mensagem Modificada](mensagemmodificada.PNG)
+
 
 **Parabéns, você construiu um pipeline CI/CD completo com GitOps!**
