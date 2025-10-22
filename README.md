@@ -329,7 +329,7 @@ Agora, vamos fazer o primeiro deploy real e testar todo o fluxo.
 5.  O status do `hello-app` no ArgoCD deve mudar para **"Healthy"** e **"Synced"**.
 
 #### 2. Acessar a Aplicação
-
+![ArgoCD Sincronizado](ArgoCDrodandoSaudável.PNG)
 1.  No seu terminal, exponha o *serviço* da aplicação (use uma porta diferente da do ArgoCD, como `8081`):
     ```bash
     kubectl port-forward service/hello-app-service 8081:80
