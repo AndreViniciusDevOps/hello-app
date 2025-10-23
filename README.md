@@ -363,4 +363,4 @@ Vamos provar que o pipeline funciona de ponta a ponta.
 ![Mensagem Modificada](mensagemmodificada.PNG)
 
 
-**Parabéns, você construiu um pipeline CI/CD completo com GitOps!**
+**Parabéns, você construiu um pipeline CI/CD completo com GitOps, utilizando as mais avançadas tecnologias do mercado e compreendendo e aprendendo todo o ciclo de uma aplicação DevOps, e DevSecOps!**
